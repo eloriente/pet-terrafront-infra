@@ -49,8 +49,12 @@ jobs:
       - name: Import existing CloudFront distribution if present
         run: |
           CF_ID=$(aws cloudfront list-distributions \
-            --query "DistributionList.Items[?Comment=='${PROJECT_NAME}'].Id" \
+            --query "DistributionList.Items[?Comment=='${PROJECT_NAME}'] | [0].Id" \
             --output text)
+
+          echo "Searching CloudFront distribution with comment: ${PROJECT_NAME}"
+          echo "Found CF_ID: $CF_ID"
+
           if [ -n "$CF_ID" ] && [ "$CF_ID" != "None" ]; then
             echo "Importing existing CloudFront distribution with ID $CF_ID"
             terraform import module.cloudfront.aws_cloudfront_distribution.s3_distribution $CF_ID || true
