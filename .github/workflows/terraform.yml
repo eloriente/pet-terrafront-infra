@@ -13,6 +13,8 @@ permissions:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    env:
+      PROJECT_NAME: terra-front
 
     steps:
       - name: Checkout repository
