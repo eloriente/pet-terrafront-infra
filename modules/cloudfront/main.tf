@@ -23,7 +23,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
     allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = var.bucket_name
-    cache_policy_id  = data.aws_cloudfront_cache_policy.managed_caching_optimized_policy.id
+    cache_policy_id  = "658327ea-f89d-4fab-a63d-7e88639e58f6"
 
     viewer_protocol_policy = "redirect-to-https"
     min_ttl                = 0
