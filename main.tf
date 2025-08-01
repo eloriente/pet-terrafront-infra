@@ -9,7 +9,7 @@ module "cloudfront" {
   bucket_name = module.s3.bucket_name
   s3_bucket_regional_domain_name = module.s3.bucket_regional_domain_name
   origin_access_control_id = "oca-id-${var.project_name}"
-  cf_distribution_comment = "CloudFront distribution for ${var.project_name}"
+  cf_distribution_comment = "${var.project_name}"
 
   depends_on = [module.s3]
 }
