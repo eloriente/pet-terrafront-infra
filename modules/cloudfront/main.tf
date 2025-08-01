@@ -20,7 +20,7 @@ resource "aws_cloudfront_distribution" "s3_distribution" {
 
 
   default_cache_behavior {
-    allowed_methods  = ["GET", "HEAD"]
+    allowed_methods  = ["GET", "HEAD", "OPTIONS"]
     cached_methods   = ["GET", "HEAD"]
     target_origin_id = var.bucket_name
     cache_policy_id  = data.aws_cloudfront_cache_policy.managed_caching_optimized_policy.id
