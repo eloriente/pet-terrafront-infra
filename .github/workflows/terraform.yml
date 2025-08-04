@@ -34,50 +34,11 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Import existing Origin Access Control if present
-        run: |
-          OAC_ID=$(aws cloudfront list-origin-access-controls \
-            --query "OriginAccessControlList.Items[?Name=='oca-id-${PROJECT_NAME}'].Id" \
-            --output text)
-          if [ -n "$OAC_ID" ] && [ "$OAC_ID" != "None" ]; then
-            echo "Importing existing OAC with ID $OAC_ID"
-            terraform import module.cloudfront.aws_cloudfront_origin_access_control.origin_access_control $OAC_ID || true
-          else
-            echo "No existing OAC found"
-          fi
-
-      - name: Import existing CloudFront distribution if present
-        run: |
-          CF_ID=$(aws cloudfront list-distributions \
-            --query "DistributionList.Items[?Comment=='${PROJECT_NAME}'] | [0].Id" \
-            --output text)
-
-          echo "Searching CloudFront distribution with comment: ${PROJECT_NAME}"
-          echo "Found CF_ID: $CF_ID"
-
-          if [ -n "$CF_ID" ] && [ "$CF_ID" != "None" ]; then
-            echo "Importing existing CloudFront distribution with ID $CF_ID"
-            terraform import module.cloudfront.aws_cloudfront_distribution.s3_distribution $CF_ID || true
-          else
-            echo "No existing CloudFront distribution found"
-          fi
-
-      - name: Import existing S3 bucket if present
-        run: |
-          BUCKET_NAME="sqt-${PROJECT_NAME}-bucket"
-          if aws s3api head-bucket --bucket "$BUCKET_NAME" 2>/dev/null; then
-            echo "Importing existing S3 bucket $BUCKET_NAME"
-            terraform import module.s3.aws_s3_bucket.s3_bucket $BUCKET_NAME || true
-          else
-            echo "No existing S3 bucket found"
-          fi
-
       - name: Terraform Validate
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan -detailed-exitcode
+        run: terraform plan
 
       - name: Terraform Apply
-        if: github.ref == 'refs/heads/main'
         run: terraform apply -auto-approve
