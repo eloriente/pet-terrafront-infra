@@ -41,7 +41,7 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -var="env=${{ matrix.env }}" -input=false
 
       - name: Terraform Apply
         run: terraform apply -var="env=${{matrix.env}}" -auto-approve
