@@ -1,11 +1,5 @@
 name: "Terraform Create Infrastructure"
 
-on:
-  push:
-    branches:
-      - main
-  workflow_dispatch:
-
 permissions:
   id-token: write
   contents: read
