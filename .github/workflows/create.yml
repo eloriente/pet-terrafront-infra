@@ -10,9 +10,11 @@ permissions:
 jobs:
   terraform:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        env: [dev, stg, prod]
     env:
       PROJECT_NAME: terra-front
-      env: [dev, stg, prod]
 
     steps:
       - name: Checkout repository
