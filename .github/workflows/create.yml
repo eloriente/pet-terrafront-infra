@@ -1,4 +1,4 @@
-name: "Terraform Deploy"
+name: "Terraform Create Infrastructure"
 
 on:
   push:
@@ -15,6 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       PROJECT_NAME: terra-front
+      env: [dev, stg, prod]
 
     steps:
       - name: Checkout repository
@@ -41,4 +42,4 @@ jobs:
         run: terraform plan
 
       - name: Terraform Apply
-        run: terraform apply -auto-approve
+        run: terraform apply -var="env=${matrix.env}" -auto-approve
