@@ -1,6 +1,6 @@
 module "s3" {
   source = "./modules/s3"
-  bucket_name = "sqt-${var.project_name}-bucket"
+  bucket_name = "sqt-${var.project_name}-${var.env}-bucket"
 }
 
 module "cloudfront" {
@@ -8,8 +8,8 @@ module "cloudfront" {
 
   bucket_name = module.s3.bucket_name
   s3_bucket_regional_domain_name = module.s3.bucket_regional_domain_name
-  origin_access_control_id = "oca-id-${var.project_name}"
-  cf_distribution_comment = "${var.project_name}"
+  origin_access_control_id = "oca-id-${var.project_name}-${var.env}"
+  cf_distribution_comment = "${var.project_name}-${var.env}"
 
   depends_on = [module.s3]
 }

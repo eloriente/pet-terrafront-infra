@@ -9,3 +9,8 @@ variable "project_name" {
   type        = string
   default     = "terra-front"
 }
+
+variable "env" {
+  description = "Environment for the project (e.g., dev, prod)"
+  type        = string
+}
