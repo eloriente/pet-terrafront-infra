@@ -62,10 +62,13 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Import S3 bucket (if not imported)
+      - name: Terraform Import Access Control
+        run: terraform import module.cloudfront.aws_cloudfront_origin_access_control.origin_access_control ${{ secrets.OAC_ID }}
+
+      - name: Import S3 bucket
         run: terraform import module.s3.aws_s3_bucket.s3_bucket ${{ secrets.S3_BUCKET_NAME }}
 
-      - name: Import Cloudfront distribution (if not imported)
+      - name: Import Cloudfront distribution
         run: terraform import module.cloudfront.aws_cloudfront_distribution.s3_distribution ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
 
       - name: Select
