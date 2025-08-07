@@ -63,10 +63,10 @@ jobs:
         run: terraform init
 
       - name: Import S3 bucket (if not imported)
-        run: terraform import module.s3.aws_s3_bucket.s3_bucket ${{ secrets.S3_BUCKET_NAME }}
+        run: terraform import aws_s3_bucket.bucket.s3_bucket ${{ secrets.S3_BUCKET_NAME }}
 
       - name: Import Cloudfront distribution (if not imported)
-        run: terraform import module.cloudfront.aws_cloudfront_distribution.s3_distribution ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+        run: terraform import aws_cloudfront_distribution.distribution ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
 
       - name: Select
         run: terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }}
