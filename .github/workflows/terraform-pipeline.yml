@@ -1,4 +1,4 @@
-name: "Terraform Create Infrastructure"
+name: "Terraform Pipeline Infrastructure"
 
 on:
   workflow_dispatch:
@@ -18,7 +18,25 @@ permissions:
   contents: read
 
 jobs:
-  create-infrastructure:
+  validate-terraform:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+
+      - name: Terraform Init
+        run: terraform init
+
+      - name: Terraform Validate
+        run: terraform validate
+
+  pipeline-infrastructure:
+    needs: validate-terraform
     runs-on: ubuntu-latest
     environment:
       name: ${{ inputs.environment }}
@@ -44,7 +62,23 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Select or create workspace
+      - name: Import S3 bucket (if not imported)
+        run: |
+          if terraform state list | grep -q "module.s3.aws_s3_bucket.s3_bucket"; then
+            echo "S3 bucket already imported"
+          else
+            terraform import module.s3.aws_s3_bucket.s3_bucket ${{ secrets.S3_BUCKET_NAME }}
+          fi
+
+      - name: Import Cloudfront distribution (if not imported)
+        run: |
+          if terraform state list | grep -q "module.cloudfront.aws_cloudfront_distribution.s3_distribution"; then
+            echo "CloudFront distribution already imported"
+          else
+            terraform import module.cloudfront.aws_cloudfront_distribution.s3_distribution ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
+          fi
+
+      - name: Select
         run: terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }}
 
       - name: Terraform Validate
