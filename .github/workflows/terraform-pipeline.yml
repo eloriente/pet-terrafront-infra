@@ -62,18 +62,23 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Terraform Import Access Control
-        run: echo ${{ secrets.OAC_ID }}
-        # run: terraform import module.cloudfront.aws_cloudfront_origin_access_control.origin_access_control ${{ secrets.OAC_ID }}
-
-      - name: Import S3 bucket
-        run: terraform import module.s3.aws_s3_bucket.s3_bucket ${{ secrets.S3_BUCKET_NAME }}
-
-      - name: Import Cloudfront distribution
-        run: terraform import module.cloudfront.aws_cloudfront_distribution.s3_distribution ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-
       - name: Select
         run: terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }}
+
+      - name: Import Access Control
+        run: |
+          terraform state list | grep -q "module.cloudfront.aws_cloudfront_origin_access_control.origin_access_control" \
+          || terraform import module.cloudfront.aws_cloudfront_origin_access_control.origin_access_control ${{ secrets.OAC_ID }}
+
+      - name: Import S3 bucket
+        run: |
+          terraform state list | grep -q "module.s3.aws_s3_bucket.s3_bucket" \
+          || terraform import module.s3.aws_s3_bucket.s3_bucket ${{ secrets.S3_BUCKET_NAME }}
+
+      - name: Import CloudFront distribution
+        run: |
+          terraform state list | grep -q "module.cloudfront.aws_cloudfront_distribution.s3_distribution" \
+          || terraform import module.cloudfront.aws_cloudfront_distribution.s3_distribution ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
 
       - name: Terraform Validate
         run: terraform validate
