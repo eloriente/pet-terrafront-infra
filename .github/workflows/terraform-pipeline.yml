@@ -64,7 +64,7 @@ jobs:
 
       - name: Terraform Import Access Control
         run: echo ${{ secrets.OAC_ID }}
-        run: terraform import module.cloudfront.aws_cloudfront_origin_access_control.origin_access_control ${{ secrets.OAC_ID }}
+        # run: terraform import module.cloudfront.aws_cloudfront_origin_access_control.origin_access_control ${{ secrets.OAC_ID }}
 
       - name: Import S3 bucket
         run: terraform import module.s3.aws_s3_bucket.s3_bucket ${{ secrets.S3_BUCKET_NAME }}
