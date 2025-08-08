@@ -65,32 +65,6 @@ jobs:
       - name: Select
         run: terraform workspace select ${{ inputs.environment }} || terraform workspace new ${{ inputs.environment }}
 
-      - name: Import Access Control
-        run: |
-          OAC_ID=$(aws cloudfront list-origin-access-controls \
-            --query "OriginAccessControlList.Items[?Name=='oca-id-${PROJECT_NAME}-${{ inputs.environment }}'].Id" \
-            --output text)
-
-          if [ -n "$OAC_ID" ] && [ "$OAC_ID" != "None" ]; then
-            echo "Importing existing OAC with ID $OAC_ID"
-            terraform import module.cloudfront.aws_cloudfront_origin_access_control.origin_access_control $OAC_ID || true
-          else
-            echo "No existing OAC found"
-          fi
-
-      - name: Import S3 bucket
-        run: |
-          terraform state list | grep -q "module.s3.aws_s3_bucket.s3_bucket" \
-          || terraform import module.s3.aws_s3_bucket.s3_bucket ${{ secrets.S3_BUCKET_NAME }}
-
-      - name: Import CloudFront distribution
-        run: |
-          terraform state list | grep -q "module.cloudfront.aws_cloudfront_distribution.s3_distribution" \
-          || terraform import module.cloudfront.aws_cloudfront_distribution.s3_distribution ${{ secrets.CLOUDFRONT_DISTRIBUTION_ID }}
-
-      - name: Terraform Validate
-        run: terraform validate
-
       - name: Terraform Plan
         run: terraform plan -var="env=${{ inputs.environment }}" -input=false
 
